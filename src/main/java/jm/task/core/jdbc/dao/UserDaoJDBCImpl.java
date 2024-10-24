@@ -9,6 +9,16 @@ import java.util.List;
 
 public class UserDaoJDBCImpl implements UserDao {
 
+    private static Connection connection;
+
+    static {
+        try {
+            connection = Util.getConnection();
+        } catch (SQLException | ClassNotFoundException e) {
+            System.out.println("Ошибка установки соединения: " + e);
+        }
+    }
+
     public UserDaoJDBCImpl() {
 
     }
@@ -16,52 +26,46 @@ public class UserDaoJDBCImpl implements UserDao {
     public void createUsersTable() {
         String query = "CREATE TABLE IF NOT EXISTS users (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(45) NOT NULL, last_name VARCHAR(45) NOT NULL, age INT NOT NULL)";
 
-        try(Connection connection = Util.getConnection();
-            Statement statement = connection.createStatement()) {
+        try(Statement statement = connection.createStatement()) {
             statement.executeUpdate(query);
 
-        } catch (SQLException | ClassNotFoundException e) {
-            System.out.println("Ошибка установки соединения: " + e);
+        } catch (SQLException e) {
+            System.out.println("Ошибка: " + e);
         }
     }
 
     public void dropUsersTable() {
         String query = "DROP TABLE IF EXISTS users";
 
-        try(Connection connection = Util.getConnection();
-            Statement statement = connection.createStatement()) {
+        try(Statement statement = connection.createStatement()) {
             statement.executeUpdate(query);
 
-        } catch (SQLException | ClassNotFoundException e) {
-            System.out.println("Ошибка установки соединения: " + e);
+        } catch (SQLException e) {
+            System.out.println("Ошибка: " + e);
         }
     }
 
     public void saveUser(String name, String lastName, byte age) {
-
         String query = "INSERT INTO users (name, last_name, age) VALUES (?, ?, ?)";
 
-        try(Connection connection = Util.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, lastName);
             preparedStatement.setByte(3, age);
             preparedStatement.executeUpdate();
-        } catch (SQLException | ClassNotFoundException e) {
-            System.out.println("Ошибка установки соединения: " + e);
+        } catch (SQLException e) {
+            System.out.println("Ошибка: " + e);
         }
     }
 
     public void removeUserById(long id) {
-
         String query = "DELETE FROM users WHERE id = ?";
 
-        try(Connection connection = Util.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
-        } catch (SQLException | ClassNotFoundException e) {
-            System.out.println("Ошибка установки соединения: " + e);
+        } catch (SQLException e) {
+            System.out.println("Ошибка: " + e);
         }
     }
 
@@ -69,8 +73,7 @@ public class UserDaoJDBCImpl implements UserDao {
         List<User> usersList = new ArrayList<>();
         String query = "SELECT * FROM users";
 
-        try(Connection connection = Util.getConnection();
-            Statement statement = connection.createStatement()) {
+        try(Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery(query);
             while (resultSet.next()) {
                 User user = new User();
@@ -81,8 +84,8 @@ public class UserDaoJDBCImpl implements UserDao {
 
                 usersList.add(user);
             }
-        } catch (SQLException | ClassNotFoundException e) {
-            System.out.println("Ошибка установки соединения: " + e);
+        } catch (SQLException e) {
+            System.out.println("Ошибка: " + e);
         }
 
         return usersList;
@@ -91,12 +94,11 @@ public class UserDaoJDBCImpl implements UserDao {
     public void cleanUsersTable() {
         String query = "DELETE FROM users";
 
-        try(Connection connection = Util.getConnection();
-            Statement statement = connection.createStatement()) {
+        try(Statement statement = connection.createStatement()) {
             statement.executeUpdate(query);
 
-        } catch (SQLException | ClassNotFoundException e) {
-            System.out.println("Ошибка установки соединения: " + e);
+        } catch (SQLException e) {
+            System.out.println("Ошибка: " + e);
         }
     }
 }
