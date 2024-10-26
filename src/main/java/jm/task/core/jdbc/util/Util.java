@@ -10,14 +10,15 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Util {
+
+    private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
+    private static final String URL = "jdbc:mysql://127.0.0.1:3306/study_database";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "9213888744";
     public static Connection getConnection() throws SQLException, ClassNotFoundException {
-        Class.forName("com.mysql.cj.jdbc.Driver");
+        Class.forName(DRIVER);
 
-        String url = "jdbc:mysql://127.0.0.1:3306/study_database";
-        String username = "root";
-        String password = "9213888744";
-
-        Connection connection = DriverManager.getConnection(url, username, password);
+        Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
         System.out.println("Соединение установлено");
 
         return connection;
@@ -26,14 +27,13 @@ public class Util {
     public static SessionFactory getSessionFactory() throws HibernateException {
         Configuration configuration = new Configuration();
 
-        configuration.setProperty("hibernate.connection.driver_class", "com.mysql.cj.jdbc.Driver");
-        configuration.setProperty("hibernate.connection.url", "jdbc:mysql://127.0.0.1:3306/study_database");
-        configuration.setProperty("hibernate.connection.username", "root");
-        configuration.setProperty("hibernate.connection.password", "9213888744");
+        configuration.setProperty("hibernate.connection.driver_class", DRIVER);
+        configuration.setProperty("hibernate.connection.url", URL);
+        configuration.setProperty("hibernate.connection.username", USERNAME);
+        configuration.setProperty("hibernate.connection.password", PASSWORD);
 
         configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
         configuration.setProperty("hibernate.dialect.storage_engine", "innodb");
-        configuration.setProperty("hibernate.hbm2ddl.auto", "update");
         configuration.setProperty("hibernate.show_sql", "true");
 
         configuration.addAnnotatedClass(User.class);
